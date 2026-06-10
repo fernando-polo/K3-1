@@ -112,10 +112,11 @@ a:not([class]) {
 body {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     "header"
-    "main";
+    "main"
+    "footer";
   gap: 1rem;
   height: 100dvh;
   background-image: url("../img/fondo.jpg");
@@ -130,7 +131,7 @@ body {
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   padding: 1rem;
 }
@@ -281,6 +282,113 @@ body {
 
 .guide__character img {
   display: block;
-  width: 45%;
+  width: 30%;
   height: auto;
+}
+
+/* ==========================================
+   FOOTER - CONTROLES
+========================================== */
+
+.footer {
+  grid-area: footer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 1rem; */
+}
+
+.footer__controls {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ==========================================
+   DESKTOP 1920 x 1080
+========================================== */
+
+@media (min-width: 1280px) {
+  /* BODY */
+  body {
+    grid-template-rows: auto 1fr;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 1rem;
+  }
+
+  .header__logo img {
+    width: 12rem;
+  }
+
+  /* GAME */
+  .game {
+    grid-template-columns: 2fr auto;
+    grid-template-rows: 1fr auto auto;
+    grid-template-areas:
+      "game-grids game-grids guide"
+      "bug-bank bug-bank guide"
+      "controls controls guide";
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 3rem;
+  }
+
+  /* GAME - GRIDS */
+  .grid {
+    grid-template-columns: repeat(3, 9rem);
+    grid-template-rows: repeat(4, 9rem);
+  }
+
+  .grid__bug {
+    width: 75%;
+    height: auto;
+  }
+
+  /* BUGBANK */
+  .bug-bank__bug {
+    width: 6rem;
+    height: auto;
+  }
+
+  /* CONTROLS */
+
+  .footer__controls {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  /* GUIDE */
+  .guide {
+    justify-content: flex-start;
+    padding: 0;
+    gap: 0;
+  }
+
+  .guide__bubble {
+    width: 26rem;
+  }
+
+  .guide__text {
+    font-size: 1.6rem;
+    line-height: 1.4;
+  }
+
+  .guide__character img {
+    width: 100%;
+  }
+
+  /* FOOTER */
+  .footer {
+    /* display: none; */
+    justify-content: flex-start;
+    padding: 0 3rem 1.5rem;
+  }
+
+  .controls__icon {
+    width: 5rem;
+  }
 }
