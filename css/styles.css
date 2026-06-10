@@ -1,0 +1,119 @@
+/* ==========================================
+   FONTS
+========================================== */
+
+@font-face {
+  font-family: fredoka;
+  src: url(../fonts/Fredoka-font.ttf);
+}
+
+@font-face {
+  font-family: mali;
+  src: url(../fonts/Mali-Bold.ttf);
+}
+
+/* ==========================================
+   RESET
+========================================== */
+
+/* Box sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Elimina márgenes por defecto */
+* {
+  margin: 0;
+}
+
+/* Permite porcentajes intuitivos en alturas */
+html,
+body {
+  height: 100%;
+}
+
+/* Mejora la legibilidad */
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mejora el renderizado de medios */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Formularios heredan la tipografía */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Evita desbordamientos de texto */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Equilibra los títulos largos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/* Mejora la lectura de párrafos */
+p {
+  text-wrap: pretty;
+}
+
+/* Listas sin estilos cuando tienen role=list */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+
+/* Anclas sin estilos especiales si no tienen clase */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: currentColor;
+}
+
+/* Reduce animaciones para usuarios que lo prefieran */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Crea un contexto de apilamiento para la aplicación */
+#root,
+#__next {
+  isolation: isolate;
+}

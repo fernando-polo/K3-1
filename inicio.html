@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K3 - El lugar de los bichos</title>
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Actividad interactiva para niños: arrastra los bichos para que las dos imágenes sean iguales."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/png" href="img/favicon.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header class="header">
+      <img
+        class="header__logo"
+        src="img/logo_compartir.png"
+        alt="Logo Compartir"
+      />
+    </header>
+
+    <main class="game">
+      <!-- Cuadrículas -->
+      <section class="game__grids">
+        <!-- Cuadrícula ejemplo (con bichos) -->
+        <div class="grid">
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_37_7.png"
+              alt="Catarina"
+              draggable="false"
+            />
+          </div>
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_38_7.png"
+              alt="Gusano"
+              draggable="false"
+            />
+          </div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_39_7.png"
+              alt="Abeja"
+              draggable="false"
+            />
+          </div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_40_7.png"
+              alt="Mariposa"
+              draggable="false"
+            />
+          </div>
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_41_7.png"
+              alt="Hormiga"
+              draggable="false"
+            />
+          </div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell">
+            <img
+              class="grid__bug"
+              src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_42_7.png"
+              alt="Libélula"
+              draggable="false"
+            />
+          </div>
+        </div>
+
+        <!-- Cuadrícula vacía (zona de destino) -->
+        <div class="grid grid--empty">
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+          <div class="grid__cell"></div>
+        </div>
+      </section>
+
+      <!-- Banco de bichos (arrastrables) -->
+      <section class="bug-bank">
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_37_7.png"
+          alt="Catarina"
+          draggable="true"
+        />
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_38_7.png"
+          alt="Abeja"
+          draggable="true"
+        />
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_39_7.png"
+          alt="Gusano"
+          draggable="true"
+        />
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_40_7.png"
+          alt="Mariposa"
+          draggable="true"
+        />
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_41_7.png"
+          alt="Hormiga"
+          draggable="true"
+        />
+        <img
+          class="bug-bank__bug"
+          src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_42_7.png"
+          alt="Libélula"
+          draggable="true"
+        />
+      </section>
+
+      <!-- Globo de diálogo + personaje -->
+      <aside class="guide">
+        <div class="guide__bubble">
+          <!-- 1. Agrega la imagen del globo aquí -->
+          <img
+            src="../img/globo.png"
+            alt="Globo de texto"
+            class="guide__bubble-img"
+          />
+
+          <!-- 2. El texto se mantendrá aquí -->
+          <p class="guide__text">
+            Arrastra a los bichos para que las dos imágenes sean iguales.
+          </p>
+        </div>
+
+        <figure class="guide__character">
+          <img
+            src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_19_2.png"
+            alt="Personaje guía"
+          />
+        </figure>
+      </aside>
+    </main>
+
+    <!-- Controles de navegación -->
+    <nav class="controls">
+      <button
+        class="controls__btn controls__btn--home"
+        aria-label="Ir al inicio"
+      >
+        <img
+          class="controls__icon"
+          src="img/home.png"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+      <button class="controls__btn controls__btn--back" aria-label="Regresar">
+        <img
+          class="controls__icon"
+          src="img/back.png"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+      <button
+        class="controls__btn controls__btn--audio"
+        aria-label="Reproducir audio"
+      >
+        <img
+          class="controls__icon"
+          src="img/audio.png"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+    </nav>
+
+    <!-- <script src="script.js"></script> -->
+  </body>
+</html>
