@@ -12,28 +12,58 @@
     />
     <meta name="robots" content="noindex, nofollow" />
 
-    <!-- FAVICON -->
-    <link rel="icon" type="image/png" href="img/favicon.png" />
-    <meta name="theme-color" content="#ffffff" />
-
     <!-- CSS -->
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
 
   <body>
     <header class="header">
-      <img
-        class="header__logo"
-        src="img/logo_compartir.png"
-        alt="Logo Compartir"
-      />
+      <div class="header__controls">
+        <button
+          class="controls__btn controls__btn--home"
+          aria-label="Ir al inicio"
+        >
+          <img
+            class="controls__icon"
+            src="img/home.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+        <button class="controls__btn controls__btn--back" aria-label="Regresar">
+          <img
+            class="controls__icon"
+            src="img/back.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          class="controls__btn controls__btn--audio"
+          aria-label="Reproducir audio"
+        >
+          <img
+            class="controls__icon"
+            src="img/audio.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+      <div class="header__logo">
+        <img
+          class="header__logo"
+          src="../img/logo_compartir.png"
+          alt="Logo Compartir"
+        />
+      </div>
     </header>
 
     <main class="game">
       <!-- Cuadrículas -->
       <section class="game__grids">
         <!-- Cuadrícula ejemplo (con bichos) -->
-        <div class="grid">
+        <div class="grid grid--reference">
           <div class="grid__cell">
             <img
               class="grid__bug"
@@ -171,41 +201,6 @@
         </figure>
       </aside>
     </main>
-
-    <!-- Controles de navegación -->
-    <nav class="controls">
-      <button
-        class="controls__btn controls__btn--home"
-        aria-label="Ir al inicio"
-      >
-        <img
-          class="controls__icon"
-          src="img/home.png"
-          alt=""
-          aria-hidden="true"
-        />
-      </button>
-      <button class="controls__btn controls__btn--back" aria-label="Regresar">
-        <img
-          class="controls__icon"
-          src="img/back.png"
-          alt=""
-          aria-hidden="true"
-        />
-      </button>
-      <button
-        class="controls__btn controls__btn--audio"
-        aria-label="Reproducir audio"
-      >
-        <img
-          class="controls__icon"
-          src="img/audio.png"
-          alt=""
-          aria-hidden="true"
-        />
-      </button>
-    </nav>
-
     <!-- <script src="script.js"></script> -->
   </body>
 </html>

@@ -16,31 +16,26 @@
    RESET
 ========================================== */
 
-/* Box sizing */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Elimina márgenes por defecto */
 * {
   margin: 0;
 }
 
-/* Permite porcentajes intuitivos en alturas */
 html,
 body {
   height: 100%;
 }
 
-/* Mejora la legibilidad */
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Mejora el renderizado de medios */
 img,
 picture,
 video,
@@ -50,7 +45,6 @@ svg {
   max-width: 100%;
 }
 
-/* Formularios heredan la tipografía */
 input,
 button,
 textarea,
@@ -58,7 +52,6 @@ select {
   font: inherit;
 }
 
-/* Evita desbordamientos de texto */
 p,
 h1,
 h2,
@@ -69,7 +62,6 @@ h6 {
   overflow-wrap: break-word;
 }
 
-/* Equilibra los títulos largos */
 h1,
 h2,
 h3,
@@ -79,24 +71,20 @@ h6 {
   text-wrap: balance;
 }
 
-/* Mejora la lectura de párrafos */
 p {
   text-wrap: pretty;
 }
 
-/* Listas sin estilos cuando tienen role=list */
 ul[role="list"],
 ol[role="list"] {
   list-style: none;
 }
 
-/* Anclas sin estilos especiales si no tienen clase */
 a:not([class]) {
   text-decoration-skip-ink: auto;
   color: currentColor;
 }
 
-/* Reduce animaciones para usuarios que lo prefieran */
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;
@@ -112,8 +100,187 @@ a:not([class]) {
   }
 }
 
-/* Crea un contexto de apilamiento para la aplicación */
 #root,
 #__next {
   isolation: isolate;
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+body {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header"
+    "main";
+  gap: 1rem;
+  height: 100dvh;
+  background-image: url("../img/fondo.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.header__controls {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ==========================================
+   CONTROLES
+========================================== */
+
+.controls__btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.controls__btn:focus,
+.controls__btn:focus-visible {
+  outline: none;
+}
+
+.controls__icon {
+  display: block;
+  width: 4rem;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ==========================================
+   GAME
+========================================== */
+
+.game {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "game-grids"
+    "bug-bank"
+    "guide";
+  gap: 1rem;
+}
+
+/* ==========================================
+   GAME - GRIDS
+========================================== */
+
+.game__grids {
+  grid-area: game-grids;
+  display: flex; /* flex en lugar de grid */
+  justify-content: center; /* centra las dos grids */
+  gap: 2rem; /* espacio entre ellas */
+  padding: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 6.5rem); /* celdas de ancho fijo */
+  grid-template-rows: repeat(4, 6.5rem); /* celdas de alto fijo = cuadradas */
+  gap: 0; /* sin gap, el borde lo dan las celdas */
+  background-color: #fff;
+}
+
+.grid--reference {
+  grid-area: grid-reference;
+}
+
+.grid--empty {
+  grid-area: grid-empty;
+}
+
+.grid__cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #9568a5;
+}
+
+/* ==========================================
+   BUG BANK
+========================================== */
+
+.bug-bank {
+  grid-area: bug-bank;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #9568a5;
+}
+
+/* ==========================================
+   GUIDE
+========================================== */
+
+.guide {
+  grid-area: guide;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 1rem 0;
+}
+
+.guide__bubble {
+  position: relative;
+  width: 15rem;
+}
+
+.guide__bubble-img {
+  display: block;
+  width: 100%;
+}
+
+.guide__text {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  font-family: "fredoka", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.3;
+  text-align: center;
+  color: #0e4ecf;
+}
+
+.guide__character {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.guide__character img {
+  display: block;
+  width: 45%;
+  height: auto;
 }
