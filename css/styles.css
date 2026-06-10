@@ -1,5 +1,5 @@
 /* ==========================================
-   FONTS
+   FUENTES
 ========================================== */
 
 @font-face {
@@ -107,6 +107,7 @@ a:not([class]) {
 
 /* ==========================================
    BODY
+   Grid de 3 filas: header | main | footer
 ========================================== */
 
 body {
@@ -127,6 +128,7 @@ body {
 
 /* ==========================================
    HEADER
+   Solo contiene el logo, alineado a la derecha
 ========================================== */
 
 .header {
@@ -136,13 +138,8 @@ body {
   padding: 1rem;
 }
 
-.header__controls {
-  display: flex;
-  gap: 1rem;
-}
-
 /* ==========================================
-   CONTROLES
+   BOTONES DE CONTROL (compartidos mobile y desktop)
 ========================================== */
 
 .controls__btn {
@@ -173,7 +170,9 @@ body {
 }
 
 /* ==========================================
-   GAME
+   GAME (mobile/tablet)
+   Grid de 1 columna: grids | bug-bank | guide
+   Los controles de desktop están ocultos aquí
 ========================================== */
 
 .game {
@@ -187,32 +186,31 @@ body {
   gap: 1rem;
 }
 
+/* Botones dentro del game: ocultos en mobile,
+   el footer se encarga en esos tamaños */
+.game__controls {
+  display: none;
+}
+
 /* ==========================================
-   GAME - GRIDS
+   CUADRÍCULAS
+   Dos grids side-by-side: referencia y destino
 ========================================== */
 
 .game__grids {
   grid-area: game-grids;
-  display: flex; /* flex en lugar de grid */
-  justify-content: center; /* centra las dos grids */
-  gap: 2rem; /* espacio entre ellas */
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
   padding: 1rem;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 6.5rem); /* celdas de ancho fijo */
-  grid-template-rows: repeat(4, 6.5rem); /* celdas de alto fijo = cuadradas */
-  gap: 0; /* sin gap, el borde lo dan las celdas */
+  grid-template-columns: repeat(3, 6.5rem);
+  grid-template-rows: repeat(4, 6.5rem);
+  gap: 0;
   background-color: #fff;
-}
-
-.grid--reference {
-  grid-area: grid-reference;
-}
-
-.grid--empty {
-  grid-area: grid-empty;
 }
 
 .grid__cell {
@@ -222,8 +220,14 @@ body {
   border: 1px solid #9568a5;
 }
 
+.grid__bug {
+  width: 60%;
+  height: auto;
+}
+
 /* ==========================================
-   BUG BANK
+   BANCO DE BICHOS
+   Fila con los bichos arrastrables
 ========================================== */
 
 .bug-bank {
@@ -237,8 +241,14 @@ body {
   border: 1px solid #9568a5;
 }
 
+.bug-bank__bug {
+  width: 4rem;
+  height: auto;
+}
+
 /* ==========================================
-   GUIDE
+   PERSONAJE GUÍA
+   Globo de diálogo + personaje ilustrado
 ========================================== */
 
 .guide {
@@ -287,7 +297,9 @@ body {
 }
 
 /* ==========================================
-   FOOTER - CONTROLES
+   FOOTER (mobile/tablet)
+   Contiene los botones de control
+   Se oculta en desktop
 ========================================== */
 
 .footer {
@@ -295,7 +307,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding: 1rem; */
 }
 
 .footer__controls {
@@ -305,90 +316,96 @@ body {
 }
 
 /* ==========================================
-   DESKTOP 1920 x 1080
+   DESKTOP (min-width: 1280px)
+   Layout de 2 columnas: contenido | guía
 ========================================== */
 
 @media (min-width: 1280px) {
-  /* BODY */
+  /* El footer desaparece: los controles
+     están dentro del game en desktop */
+  .footer {
+    display: none;
+  }
+
+  /* BODY: sin fila para el footer */
   body {
     grid-template-rows: auto 1fr;
   }
 
   /* HEADER */
-  .header {
-    padding: 1rem;
-  }
-
   .header__logo img {
-    width: 12rem;
+    width: 20rem;
   }
 
-  /* GAME */
+  /* GAME
+     Columna izquierda: grids + bug-bank + controles
+     Columna derecha: guía (ocupa las 3 filas) */
   .game {
     grid-template-columns: 2fr auto;
     grid-template-rows: 1fr auto auto;
     grid-template-areas:
-      "game-grids game-grids guide"
-      "bug-bank bug-bank guide"
-      "controls controls guide";
+      "game-grids guide"
+      "bug-bank   guide"
+      "controls   guide";
     align-items: center;
     gap: 1.5rem;
     padding: 0 3rem;
   }
 
-  /* GAME - GRIDS */
+  /* CUADRÍCULAS: celdas más grandes en desktop */
   .grid {
     grid-template-columns: repeat(3, 9rem);
     grid-template-rows: repeat(4, 9rem);
   }
 
-  .grid__bug {
-    width: 75%;
-    height: auto;
+  /* BANCO DE BICHOS: centrado y con ancho limitado */
+  .bug-bank {
+    width: 72%;
+    margin: 0 auto;
   }
 
-  /* BUGBANK */
   .bug-bank__bug {
-    width: 6rem;
+    width: 5rem;
     height: auto;
   }
 
-  /* CONTROLS */
-
-  .footer__controls {
+  /* CONTROLES dentro del game:
+     visibles en desktop, ocultos en mobile */
+  .game__controls {
     display: flex;
+    grid-area: controls;
+    justify-content: start;
     gap: 1rem;
     padding: 1rem;
   }
 
-  /* GUIDE */
+  .controls__icon {
+    width: 5rem;
+  }
+
+  /* GUÍA: ocupa toda la altura de la columna derecha,
+     el personaje se empuja hacia abajo con margin-top: auto */
   .guide {
+    align-self: stretch;
     justify-content: flex-start;
-    padding: 0;
-    gap: 0;
+    margin-top: auto;
   }
 
   .guide__bubble {
     width: 26rem;
+    margin-top: auto;
   }
 
   .guide__text {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     line-height: 1.4;
+  }
+
+  .guide__character {
+    margin-top: auto;
   }
 
   .guide__character img {
     width: 100%;
-  }
-
-  /* FOOTER */
-  .footer {
-    /* display: none; */
-    justify-content: flex-start;
-    padding: 0 3rem 1.5rem;
-  }
-
-  .controls__icon {
-    width: 5rem;
   }
 }

@@ -17,20 +17,22 @@
   </head>
 
   <body>
+    <!-- ==============================
+         ENCABEZADO: logo
+    ============================== -->
     <header class="header">
       <div class="header__logo">
-        <img
-          class="header__logo"
-          src="../img/logo_compartir.png"
-          alt="Logo Compartir"
-        />
+        <img src="../img/logo_compartir.png" alt="Logo Compartir" />
       </div>
     </header>
 
+    <!-- ==============================
+         JUEGO: área principal
+    ============================== -->
     <main class="game">
-      <!-- Cuadrículas -->
+      <!-- Cuadrículas: referencia + destino -->
       <section class="game__grids">
-        <!-- Cuadrícula ejemplo (con bichos) -->
+        <!-- Cuadrícula de referencia (con bichos fijos) -->
         <div class="grid grid--reference">
           <div class="grid__cell">
             <img
@@ -88,7 +90,7 @@
           </div>
         </div>
 
-        <!-- Cuadrícula vacía (zona de destino) -->
+        <!-- Cuadrícula vacía (zona de destino para soltar bichos) -->
         <div class="grid grid--empty">
           <div class="grid__cell"></div>
           <div class="grid__cell"></div>
@@ -105,7 +107,7 @@
         </div>
       </section>
 
-      <!-- Banco de bichos (arrastrables) -->
+      <!-- Banco de bichos arrastrables -->
       <section class="bug-bank">
         <img
           class="bug-bank__bug"
@@ -145,22 +147,18 @@
         />
       </section>
 
-      <!-- Globo de diálogo + personaje -->
+      <!-- Personaje guía con globo de diálogo -->
       <aside class="guide">
         <div class="guide__bubble">
-          <!-- 1. Agrega la imagen del globo aquí -->
           <img
             src="../img/globo.png"
             alt="Globo de texto"
             class="guide__bubble-img"
           />
-
-          <!-- 2. El texto se mantendrá aquí -->
           <p class="guide__text">
             Arrastra a los bichos para que las dos imágenes sean iguales.
           </p>
         </div>
-
         <figure class="guide__character">
           <img
             src="../img/C26_As_2_0_T1_K3_MAT_HTML_BC_PRIN_19_2.png"
@@ -168,8 +166,46 @@
           />
         </figure>
       </aside>
+
+      <!-- Botones de control (visibles solo en desktop, viven dentro del grid) -->
+      <div class="game__controls">
+        <button
+          class="controls__btn controls__btn--home"
+          aria-label="Ir al inicio"
+        >
+          <img
+            class="controls__icon"
+            src="img/home.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+        <button class="controls__btn controls__btn--back" aria-label="Regresar">
+          <img
+            class="controls__icon"
+            src="img/back.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          class="controls__btn controls__btn--audio"
+          aria-label="Reproducir audio"
+        >
+          <img
+            class="controls__icon"
+            src="img/audio.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+      </div>
     </main>
-    <!-- <script src="script.js"></script> -->
+
+    <!-- ==============================
+         PIE: botones de control
+         (visibles solo en mobile/tablet)
+    ============================== -->
     <footer class="footer">
       <div class="footer__controls">
         <button
@@ -204,5 +240,7 @@
         </button>
       </div>
     </footer>
+
+    <!-- <script src="script.js"></script> -->
   </body>
 </html>
