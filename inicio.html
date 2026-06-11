@@ -4,35 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>K3 - El lugar de los bichos</title>
-
-    <!-- SEO -->
     <meta
       name="description"
       content="Actividad interactiva para niños: arrastra los bichos para que las dos imágenes sean iguales."
     />
     <meta name="robots" content="noindex, nofollow" />
-
-    <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css" />
   </head>
 
   <body>
-    <!-- ==============================
-         ENCABEZADO: logo
-    ============================== -->
+    <!-- ENCABEZADO -->
     <header class="header">
       <div class="header__logo">
         <img src="../img/logo_compartir.png" alt="Logo Compartir" />
       </div>
     </header>
 
-    <!-- ==============================
-         JUEGO: área principal
-    ============================== -->
+    <!-- JUEGO -->
     <main class="game">
-      <!-- Cuadrículas: referencia + destino -->
+      <!-- Cuadrículas: referencia (izquierda) + destino (derecha) -->
       <section class="game__grids">
-        <!-- Cuadrícula de referencia (con bichos fijos) -->
         <div class="grid grid--reference">
           <div class="grid__cell">
             <img
@@ -51,6 +42,7 @@
             />
           </div>
           <div class="grid__cell"></div>
+
           <div class="grid__cell"></div>
           <div class="grid__cell">
             <img
@@ -61,6 +53,7 @@
             />
           </div>
           <div class="grid__cell"></div>
+
           <div class="grid__cell"></div>
           <div class="grid__cell">
             <img
@@ -78,6 +71,7 @@
               draggable="false"
             />
           </div>
+
           <div class="grid__cell"></div>
           <div class="grid__cell"></div>
           <div class="grid__cell">
@@ -90,7 +84,7 @@
           </div>
         </div>
 
-        <!-- Cuadrícula vacía (zona de destino para soltar bichos) -->
+        <!-- Zona de destino: el alumno suelta los bichos aquí -->
         <div class="grid grid--empty">
           <div class="grid__cell"></div>
           <div class="grid__cell"></div>
@@ -167,9 +161,10 @@
         </figure>
       </aside>
 
-      <!-- Botones de control (visibles solo en desktop, viven dentro del grid) -->
+      <!-- Botones de control — solo visibles en desktop -->
       <div class="game__controls">
-        <button
+        <a
+          href="../../k3_menu.html"
           class="controls__btn controls__btn--home"
           aria-label="Ir al inicio"
         >
@@ -179,15 +174,19 @@
             alt=""
             aria-hidden="true"
           />
-        </button>
-        <button class="controls__btn controls__btn--back" aria-label="Regresar">
+        </a>
+        <a
+          href="inicio.html"
+          class="controls__btn controls__btn--back"
+          aria-label="Regresar"
+        >
           <img
             class="controls__icon"
             src="img/back.png"
             alt=""
             aria-hidden="true"
           />
-        </button>
+        </a>
         <button
           class="controls__btn controls__btn--audio"
           aria-label="Reproducir audio"
@@ -202,10 +201,7 @@
       </div>
     </main>
 
-    <!-- ==============================
-         PIE: botones de control
-         (visibles solo en mobile/tablet)
-    ============================== -->
+    <!-- FOOTER — botones de control solo en mobile/tablet -->
     <footer class="footer">
       <div class="footer__controls">
         <a
@@ -220,7 +216,6 @@
             aria-hidden="true"
           />
         </a>
-
         <a
           href="inicio.html"
           class="controls__btn controls__btn--back"
@@ -233,7 +228,6 @@
             aria-hidden="true"
           />
         </a>
-
         <button
           class="controls__btn controls__btn--audio"
           aria-label="Reproducir audio"

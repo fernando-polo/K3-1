@@ -7,15 +7,14 @@
   "use strict";
 
   /* ------------------------------------------
-     1. REFERENCIAS AL DOM
+     REFERENCIAS AL DOM
   ------------------------------------------ */
   const emptyCells = document.querySelectorAll(".grid--empty .grid__cell");
   const refCells = document.querySelectorAll(".grid--reference .grid__cell");
   const bankBugs = document.querySelectorAll(".bug-bank__bug");
 
   /* ------------------------------------------
-     2. AUDIO
-     Rutas relativas a la carpeta del HTML
+     AUDIO
   ------------------------------------------ */
   const AUDIO = {
     intro: "../audio/C26_AS_AU_RE_67_PRIN.mp3",
@@ -26,58 +25,51 @@
 
   function playAudio(src) {
     const audio = new Audio(src);
-    audio.play().catch(() => {
-      // Silencia errores si el archivo no existe en dev
-    });
+    audio.play().catch(() => {});
   }
 
   /* ------------------------------------------
-     3. MAPA DE SOLUCIÓN
-     Construimos un array con el alt (identificador)
-     que debe ir en cada celda de la grid vacía,
-     leyendo las celdas de referencia en orden.
+     SOLUCIÓN
+     Array con el src esperado en cada celda
+     de la grid vacía (null = celda vacía).
   ------------------------------------------ */
   const solution = Array.from(refCells).map((cell) => {
     const img = cell.querySelector("img");
-    return img ? img.getAttribute("src") : null; // null = celda vacía
+    return img ? img.getAttribute("src") : null;
   });
 
   /* ------------------------------------------
-     4. ESTADO DEL JUEGO
-     Cuántas celdas ya están correctamente ocupadas
+     ESTADO DEL JUEGO
   ------------------------------------------ */
   let correctCount = 0;
   const totalBugs = solution.filter(Boolean).length; // 6
 
   /* ------------------------------------------
-     5. DRAG SOURCE
-     Guardamos qué elemento se está arrastrando
-     y de dónde viene (banco o celda).
+     DRAG SOURCE
+     Qué imagen se arrastra y desde dónde viene.
   ------------------------------------------ */
-  let dragSrc = null; // el <img> que se mueve
-  let dragFromCell = null; // la celda de origen (null si viene del banco)
+  let dragSrc = null; // <img> en movimiento
+  let dragFromCell = null; // celda de origen (null si viene del banco)
 
   /* ------------------------------------------
-     6. HELPERS
+     HELPERS
   ------------------------------------------ */
 
-  /** Devuelve el índice (0-11) de una celda vacía */
+  /** Índice (0-11) de una celda en la grid vacía */
   function cellIndex(cell) {
     return Array.from(emptyCells).indexOf(cell);
   }
 
-  /** Animación de rebote: la imagen vuelve a su posición original */
+  /** Rebota la imagen y la devuelve a su origen */
   function bounceBack(img, originParent) {
     img.classList.add("bug--bounce");
     img.addEventListener(
       "animationend",
       () => {
         img.classList.remove("bug--bounce");
-        // Devolver al origen
         if (originParent) {
           originParent.appendChild(img);
         } else {
-          // Volver al banco
           img.draggable = true;
           img.classList.remove("bug--placed");
           document.querySelector(".bug-bank").appendChild(img);
@@ -88,10 +80,10 @@
   }
 
   /* ------------------------------------------
-     7. EVENTOS DE ARRASTRE — ORIGEN
+     DRAG — ORIGEN
   ------------------------------------------ */
 
-  /** Configura los listeners en un <img> arrastrable */
+  /** Registra los listeners de arrastre en una imagen */
   function makeDraggable(img) {
     img.addEventListener("dragstart", onDragStart);
     img.addEventListener("dragend", onDragEnd);
@@ -103,19 +95,17 @@
     dragFromCell = dragSrc.closest(".grid--empty .grid__cell") || null;
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", dragSrc.getAttribute("src"));
-
-    // Ocultamos el original mientras se arrastra
-    // (setTimeout para que el navegador alcance a tomar el snapshot del drag ghost)
+    // setTimeout para que el navegador capture el ghost antes de ocultar el original
     setTimeout(() => dragSrc.classList.add("bug--dragging"), 0);
   }
 
   function onDragEnd(e) {
-    // Si por algún motivo no se procesó el drop (soltó fuera), restauramos visibilidad
+    // Restaura visibilidad si el drop no fue procesado (soltó fuera)
     if (dragSrc) dragSrc.classList.remove("bug--dragging");
   }
 
   /* ------------------------------------------
-     8. EVENTOS DE ARRASTRE — DESTINO (celdas vacías)
+     DRAG — DESTINO (celdas de la grid vacía)
   ------------------------------------------ */
 
   emptyCells.forEach((cell) => {
@@ -140,37 +130,31 @@
 
     if (!dragSrc) return;
 
-    // Siempre quitamos la clase de ocultamiento al resolver el drop
     dragSrc.classList.remove("bug--dragging");
 
     const targetCell = this;
     const idx = cellIndex(targetCell);
 
-    // ¿Ya tiene un bicho correctamente colocado?
+    // Celda bloqueada → rebote
     if (targetCell.dataset.locked === "true") {
       playAudio(AUDIO.wrong);
-
       if (dragFromCell) {
         dragFromCell.appendChild(dragSrc);
       } else {
         document.querySelector(".bug-bank").appendChild(dragSrc);
       }
-
       dragSrc.classList.add("bug--bounce");
-
       dragSrc.addEventListener(
         "animationend",
         () => dragSrc.classList.remove("bug--bounce"),
         { once: true },
       );
-
       dragSrc = null;
       dragFromCell = null;
-
       return;
     }
 
-    // ¿La celda ya tiene un bicho no bloqueado? Lo devolvemos al banco.
+    // Si la celda tenía un bicho sin bloquear, lo devolvemos al banco
     const existing = targetCell.querySelector("img");
     if (existing) {
       existing.draggable = true;
@@ -179,15 +163,12 @@
       makeDraggable(existing);
     }
 
-    // Verificamos si la respuesta es correcta
     const expectedSrc = solution[idx];
     const droppedSrc = dragSrc.getAttribute("src");
 
     if (expectedSrc && droppedSrc === expectedSrc) {
-      // ✅ CORRECTO
       placeCorrectly(dragSrc, targetCell);
     } else {
-      // ❌ INCORRECTO — rebote
       playAudio(AUDIO.wrong);
       if (dragFromCell) {
         dragFromCell.appendChild(dragSrc);
@@ -206,7 +187,7 @@
     dragFromCell = null;
   }
 
-  /** Coloca el bicho como correcto, bloquea la celda y actualiza el conteo */
+  /** Coloca el bicho correctamente, lo bloquea y verifica victoria */
   function placeCorrectly(img, cell) {
     img.draggable = false;
     img.classList.add("bug--placed");
@@ -214,7 +195,6 @@
     cell.dataset.locked = "true";
     playAudio(AUDIO.correct);
 
-    // Animación de rebote de confirmación
     img.classList.add("bug--bounce-correct");
     img.addEventListener(
       "animationend",
@@ -230,16 +210,14 @@
   }
 
   /* ------------------------------------------
-     9. SOPORTE TÁCTIL (Touch Events)
-     Para tablets y móviles
+     TOUCH — soporte táctil para tablet/móvil
   ------------------------------------------ */
 
-  let touchClone = null; // ghost que sigue el dedo
+  let touchClone = null; // imagen fantasma que sigue el dedo
   let touchOriginX = 0;
   let touchOriginY = 0;
 
   function onTouchStart(e) {
-    // Si ya está bloqueado, no hacer nada
     if (e.currentTarget.draggable === false) return;
 
     e.preventDefault();
@@ -252,7 +230,7 @@
     touchOriginX = touch.clientX - rect.left;
     touchOriginY = touch.clientY - rect.top;
 
-    // Crear clon visual que sigue el dedo
+    // Clon visual que sigue el dedo
     touchClone = dragSrc.cloneNode(true);
     touchClone.style.cssText = `
       position: fixed;
@@ -293,8 +271,8 @@
       ? target.closest(".grid--empty .grid__cell")
       : null;
 
+    // Soltó fuera de una celda → rebote
     if (!targetCell || !dragSrc) {
-      // Soltó fuera de una celda → rebote
       if (dragSrc) {
         dragSrc.classList.add("bug--bounce");
         dragSrc.addEventListener(
@@ -308,36 +286,29 @@
       return;
     }
 
-    // Simular el drop
-    const fakeEvent = { preventDefault: () => {} };
-    const dropHandler = onDrop.bind(targetCell);
-
-    // Reutilizamos la lógica de drop
     const idx = cellIndex(targetCell);
     const expectedSrc = solution[idx];
     const droppedSrc = dragSrc.getAttribute("src");
 
+    // Celda bloqueada → rebote
     if (targetCell.dataset.locked === "true") {
       playAudio(AUDIO.wrong);
-
       if (dragFromCell) {
         dragFromCell.appendChild(dragSrc);
       } else {
         document.querySelector(".bug-bank").appendChild(dragSrc);
       }
-
       dragSrc.classList.add("bug--bounce");
-
       dragSrc.addEventListener(
         "animationend",
         () => dragSrc.classList.remove("bug--bounce"),
         { once: true },
       );
-
       dragSrc = dragFromCell = null;
       return;
     }
 
+    // Si había un bicho sin bloquear, lo devolvemos al banco
     const existing = targetCell.querySelector("img");
     if (existing && existing !== dragSrc) {
       existing.draggable = true;
@@ -376,7 +347,7 @@
   }
 
   /* ------------------------------------------
-     10. FEEDBACK DE VICTORIA
+     PANTALLA DE VICTORIA
   ------------------------------------------ */
   function showWinFeedback() {
     document.body.classList.add("game--win");
@@ -387,13 +358,11 @@
       <div class="win-overlay__content">
         <div class="win-overlay__cloud-wrap">
           <img class="win-overlay__cloud" src="../img/nube_final.png" alt="" />
-
           <p class="win-overlay__msg">
             ¡Muy bien!<br>
             Acomodaste todas las<br>
             imágenes correctamente.
           </p>
-
           <button class="win-overlay__continue" aria-label="Continuar">
             <img src="../img/end_btn.png" alt="Continuar" />
           </button>
@@ -408,22 +377,15 @@
   }
 
   /* ------------------------------------------
-     11. AUDIO DE INSTRUCCIÓN
-     - Se intenta reproducir al cargar la página.
-     - El botón de audio lo reinicia desde el principio,
-       deteniendo cualquier reproducción anterior.
+     AUDIO DE INSTRUCCIÓN
+     Se reproduce al cargar; el botón lo reinicia.
   ------------------------------------------ */
-
-  // Instancia reutilizable del audio de intro
   const introAudio = new Audio(AUDIO.intro);
 
   function playIntro() {
     introAudio.pause();
     introAudio.currentTime = 0;
-    introAudio.play().catch(() => {
-      // El navegador bloqueó el autoplay; el usuario
-      // puede presionar el botón para escucharlo.
-    });
+    introAudio.play().catch(() => {});
   }
 
   document.querySelectorAll(".controls__btn--audio").forEach((btn) => {
@@ -431,17 +393,15 @@
   });
 
   /* ------------------------------------------
-     12. INICIALIZACIÓN
+     INICIALIZACIÓN
   ------------------------------------------ */
   bankBugs.forEach((bug) => makeDraggable(bug));
 
-  // Intentar reproducir instrucción al cargar.
-  // Si el navegador lo bloquea, se reproducirá
-  // la primera vez que el usuario toque la página.
+  // Reproduce la instrucción al cargar.
+  // Si el autoplay está bloqueado, espera la primera interacción.
   window.addEventListener("load", () => {
     setTimeout(() => {
       introAudio.play().catch(() => {
-        // Autoplay bloqueado: esperar interacción del usuario
         const unlockIntro = () => {
           playIntro();
           document.removeEventListener("pointerdown", unlockIntro);
