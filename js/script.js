@@ -17,10 +17,10 @@
      AUDIO
   ------------------------------------------ */
   const AUDIO = {
-    intro: "../audio/C26_AS_AU_RE_67_PRIN.mp3",
-    wrong: "../audio/C26_AS_AU_RE_17_PRIN.mp3",
-    correct: "../audio/C26_AS_AU_RE_56_PRIN.mp3",
-    win: "../audio/C26_AS_AU_RE_68_PRIN.mp3",
+    intro: "audio/C26_AS_AU_RE_67_PRIN.mp3",
+    wrong: "audio/C26_AS_AU_RE_17_PRIN.mp3",
+    correct: "audio/C26_AS_AU_RE_56_PRIN.mp3",
+    win: "audio/C26_AS_AU_RE_68_PRIN.mp3",
   };
 
   function playAudio(src) {
@@ -357,14 +357,14 @@
     overlay.innerHTML = `
       <div class="win-overlay__content">
         <div class="win-overlay__cloud-wrap">
-          <img class="win-overlay__cloud" src="../img/nube_final.png" alt="" />
+          <img class="win-overlay__cloud" src="img/nube_final.png" alt="" />
           <p class="win-overlay__msg">
             ¡Muy bien!<br>
             Acomodaste todas las<br>
             imágenes correctamente.
           </p>
           <button class="win-overlay__continue" aria-label="Continuar">
-            <img src="../img/end_btn.png" alt="Continuar" />
+            <img src="img/end_btn.png" alt="Continuar" />
           </button>
         </div>
       </div>

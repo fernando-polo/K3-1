@@ -232,7 +232,8 @@ body {
   justify-content: space-around;
   align-items: center;
   gap: 1rem;
-  min-height: 6rem;
+  height: 6rem;
+  min-height: unset;
   padding: 1rem;
   background-color: #fff;
   border: 1px solid #9568a5;
@@ -536,7 +537,7 @@ body {
   .bug-bank {
     width: 82%;
     height: 7rem;
-    min-height: 7rem;
+    min-height: unset;
     margin: 0 auto;
   }
 
@@ -653,6 +654,8 @@ body {
   .bug-bank {
     width: 90%;
     margin: 0.5rem auto 0;
+    height: 7rem; /* ← ya lo tenías, está bien */
+    min-height: unset;
   }
 
   .bug-bank__bug {
