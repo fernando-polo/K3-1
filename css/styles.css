@@ -602,7 +602,7 @@ body {
    Mismo layout que desktop, escala reducida
 ========================================== */
 
-@media (min-width: 1024px) and (max-width: 1279px) {
+@media (min-width: 1000px) and (max-width: 1279px) {
   .footer {
     display: none;
   }
@@ -688,7 +688,7 @@ body {
   }
 
   .guide__text {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     line-height: 1.4;
   }
 
