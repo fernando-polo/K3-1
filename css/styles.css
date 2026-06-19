@@ -163,7 +163,7 @@ body {
 
 .controls__icon {
   display: block;
-  width: 3rem;
+  width: 2rem;
   height: auto;
   user-select: none;
   pointer-events: none;
@@ -311,14 +311,14 @@ body.is-dragging * {
 
 .footer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   grid-area: footer;
 }
 
 .footer__controls {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   padding: 1rem;
 }
 
@@ -561,15 +561,15 @@ body.is-dragging * {
   .game__controls {
     display: flex;
     justify-content: flex-start;
-    gap: 3rem;
+    gap: 1rem;
     width: 100%;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     grid-area: controls;
     justify-self: center;
   }
 
   .controls__icon {
-    width: 4.5rem;
+    width: 3.5rem;
   }
 
   .guide {
@@ -678,12 +678,12 @@ body.is-dragging * {
     display: flex;
     grid-area: controls;
     justify-content: start;
-    gap: 1.5rem;
+    gap: 1rem;
     padding: 1rem 3rem;
   }
 
   .controls__icon {
-    width: 3rem;
+    width: 2.5rem;
   }
 
   /* justify-content: flex-end agrupa globo + personaje abajo */
