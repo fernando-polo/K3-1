@@ -23,11 +23,72 @@
     win: "audio/C26_AS_AU_RE_68_PRIN.mp3",
   };
 
+  const audioCache = new Map();
+  let winAudioUnlocked = false;
+
+  /* ------------------------------------------
+   REPRODUCCIÓN DE AUDIO
+   En iOS/iPadOS, reutilizar el mismo elemento
+   <audio> con pause()+currentTime=0+play() en
+   sucesión rápida puede dejarlo "atascado" y
+   sin sonido. Si el audio cacheado sigue sonando,
+   se usa un clon en vez de interrumpirlo.
+------------------------------------------ */
   function playAudio(src) {
-    const audio = new Audio(src);
-    audio.play().catch(() => {});
+    const cached = audioCache.get(src);
+    let audio;
+
+    if (!cached) {
+      audio = new Audio(src);
+      audio.preload = "auto";
+      audioCache.set(src, audio);
+    } else if (cached.paused) {
+      audio = cached;
+      audio.currentTime = 0;
+    } else {
+      audio = cached.cloneNode(true);
+    }
+
+    audio.play().catch((err) => {
+      console.warn("No se pudo reproducir audio:", src, err);
+    });
   }
 
+  // Precarga los efectos para que estén listos desde el primer uso
+  [AUDIO.wrong, AUDIO.correct, AUDIO.win].forEach((src) => {
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    audioCache.set(src, audio);
+  });
+
+  /* ------------------------------------------
+   DESBLOQUEO DE AUDIO EN iOS/iPadOS
+   Safari solo permite reproducir audio si el
+   .play() ocurre síncronamente dentro de un
+   gesto del usuario. El audio de victoria se
+   dispara con delay (setTimeout), así que lo
+   "desbloqueamos" en el primer toque/clic,
+   reproduciéndolo y pausándolo de inmediato.
+------------------------------------------ */
+  function unlockWinAudio() {
+    if (winAudioUnlocked) return;
+    const winAudio = audioCache.get(AUDIO.win);
+    if (!winAudio) return;
+
+    winAudio
+      .play()
+      .then(() => {
+        winAudio.pause();
+        winAudio.currentTime = 0;
+        winAudioUnlocked = true;
+      })
+      .catch(() => {
+        // Si falla, se reintentará en el siguiente gesto
+      });
+  }
+
+  document.addEventListener("pointerdown", unlockWinAudio, { once: true });
+  document.addEventListener("touchstart", unlockWinAudio, { once: true });
   /* ------------------------------------------
      SOLUCIÓN
      Array con el src esperado en cada celda

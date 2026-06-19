@@ -243,6 +243,11 @@ body {
 .bug-bank__bug {
   width: 4rem;
   height: auto;
+  cursor: grab;
+}
+
+.bug-bank__bug:active {
+  cursor: grabbing;
 }
 
 /* ==========================================
