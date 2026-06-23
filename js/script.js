@@ -1,13 +1,8 @@
-/* ==========================================
-   K3 – El lugar de los bichos
-   Lógica de arrastrar y soltar
-========================================== */
-
 (function () {
-  ("use strict");
+  "use strict";
 
   /* ==========================================
-     REFERENCIAS AL DOM
+     DOM
   ========================================== */
   const emptyCells = document.querySelectorAll(".grid--empty .grid__cell");
   const refCells = document.querySelectorAll(".grid--reference .grid__cell");
@@ -24,14 +19,8 @@
   };
 
   const audioCache = new Map();
-
-  // El audio que se está reproduciendo actualmente
   let currentAudio = null;
-
-  // true mientras el intro esté sonando — ningún otro audio lo interrumpe
   let introPlaying = false;
-
-  // true una vez que el intro ya sonó al menos una vez
   let introPlayed = false;
 
   function getAudio(src) {
@@ -43,61 +32,43 @@
     return audioCache.get(src);
   }
 
-  /**
-   * Reproduce un audio de feedback (acierto / error / victoria).
-   * Si el intro está sonando, NO lo interrumpe.
-   * Si hay otro feedback sonando, lo cancela y arranca el nuevo.
-   */
+  // Detiene el audio actual y reproduce uno nuevo.
+  // No interrumpe el intro mientras esté sonando.
   function playAudio(src) {
-    if (introPlaying) return; // el intro es intocable mientras suena
-
+    if (introPlaying) return;
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
-
     const audio = getAudio(src);
     currentAudio = audio;
     audio.currentTime = 0;
-
     audio.play().catch((err) => {
-      if (err.name !== "AbortError") {
+      if (err.name !== "AbortError")
         console.warn("Audio bloqueado:", src, err.name);
-      }
     });
   }
 
-  /**
-   * Reproduce el audio de instrucción.
-   * Marca introPlaying = true mientras dura y lo limpia al terminar.
-   */
   function playIntroAudio() {
     const audio = getAudio(AUDIO.intro);
-
-    // Detiene cualquier feedback previo antes de arrancar el intro
     if (currentAudio && currentAudio !== audio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
-
     currentAudio = audio;
     audio.currentTime = 0;
     introPlaying = true;
-
     audio
       .play()
       .then(() => {
         introPlayed = true;
       })
       .catch((err) => {
-        introPlaying = false; // falló el autoplay, quedará pendiente
+        introPlaying = false;
         currentAudio = null;
-        if (err.name !== "AbortError") {
+        if (err.name !== "AbortError")
           console.warn("Intro bloqueado:", err.name);
-        }
       });
-
-    // Al terminar de reproducirse, libera el bloqueo
     audio.addEventListener(
       "ended",
       () => {
@@ -116,57 +87,40 @@
     introPlaying = false;
   }
 
-  // Precarga todos los audios
+  // Precarga todos los archivos de audio
   Object.values(AUDIO).forEach((src) => getAudio(src));
 
   /* ==========================================
-     SOLUCIÓN DEL JUEGO
+     SOLUCIÓN
   ========================================== */
-
-  // Array con el src esperado en cada celda de la grid vacía
-  // (null = celda que debe quedar vacía)
+  // src esperado en cada celda (null = celda vacía)
   const solution = Array.from(refCells).map((cell) => {
     const img = cell.querySelector("img");
     return img ? img.getAttribute("src") : null;
   });
 
-  // Cantidad de bichos colocados correctamente hasta el momento
   let correctCount = 0;
-
-  // Total de bichos que hay que colocar para ganar (6)
   const totalBugs = solution.filter(Boolean).length;
 
   /* ==========================================
-     ARRASTRE UNIFICADO (mouse + touch)
-     Mismo motor para desktop e iPad: el cursor/
-     clon visual se controla por completo en JS
-     y no depende del drag nativo del navegador.
+     DRAG & DROP (mouse + touch)
   ========================================== */
-
   let dragSrc = null; // <img> en movimiento
   let dragFromCell = null; // celda de origen (null si viene del banco)
-  let dragClone = null; // imagen fantasma que sigue al puntero/dedo
-  let pointerOffsetX = 0; // distancia del punto de toque al borde izq. de la imagen
-  let pointerOffsetY = 0; // distancia del punto de toque al borde sup. de la imagen
-  let hoveredCell = null; // celda actualmente resaltada bajo el puntero/dedo
-  let playAreaRect = null; // rectángulo permitido para el arrastre (grids + banco)
+  let dragClone = null; // fantasma visual que sigue al puntero
+  let pointerOffsetX = 0;
+  let pointerOffsetY = 0;
+  let hoveredCell = null;
+  let playAreaRect = null;
 
-  /** Índice (0-11) de una celda dentro de la grid vacía */
   function cellIndex(cell) {
     return Array.from(emptyCells).indexOf(cell);
   }
 
-  /**
-   * Calcula el rectángulo que envuelve a .game__grids + .bug-bank.
-   * Se usa para limitar el arrastre a esa zona y que el bicho no
-   * se salga de la pantalla ni invada el área de la guía/controles.
-   */
+  // Rectángulo que une las dos grids y el banco; limita el arrastre
   function getPlayAreaRect() {
-    const grids = document.querySelector(".game__grids");
-    const bank = document.querySelector(".bug-bank");
-    const r1 = grids.getBoundingClientRect();
-    const r2 = bank.getBoundingClientRect();
-
+    const r1 = document.querySelector(".game__grids").getBoundingClientRect();
+    const r2 = document.querySelector(".bug-bank").getBoundingClientRect();
     return {
       left: Math.min(r1.left, r2.left),
       top: Math.min(r1.top, r2.top),
@@ -175,20 +129,15 @@
     };
   }
 
-  /** Registra los listeners de arrastre (mouse + touch) en una imagen */
   function makeDraggable(img) {
     img.addEventListener("mousedown", onPointerStart);
     img.addEventListener("touchstart", onPointerStart, { passive: false });
   }
 
-  /** Inicia el arrastre: crea el clon visual y arma el área permitida */
   function onPointerStart(e) {
-    // Bicho ya colocado correctamente → bloqueado, no se arrastra
     if (e.currentTarget.classList.contains("bug--placed")) return;
-
     const isTouch = e.type === "touchstart";
-    if (!isTouch && e.button !== 0) return; // solo clic izquierdo
-
+    if (!isTouch && e.button !== 0) return;
     e.preventDefault();
 
     dragSrc = e.currentTarget;
@@ -200,7 +149,6 @@
     pointerOffsetX = point.clientX - rect.left;
     pointerOffsetY = point.clientY - rect.top;
 
-    // Clon visual que sigue al puntero (mouse o dedo)
     dragClone = dragSrc.cloneNode(true);
     dragClone.style.cssText = `
       position: fixed;
@@ -218,108 +166,83 @@
     document.body.classList.add("is-dragging");
 
     if (isTouch) {
-      document.addEventListener("touchmove", onPointerMove, {
-        passive: false,
-      });
+      document.addEventListener("touchmove", onPointerMove, { passive: false });
       document.addEventListener("touchend", onPointerEnd, { once: true });
-      document.addEventListener("touchcancel", onPointerCancel, {
-        once: true,
-      });
+      document.addEventListener("touchcancel", onPointerCancel, { once: true });
     } else {
       document.addEventListener("mousemove", onPointerMove);
       document.addEventListener("mouseup", onPointerEnd, { once: true });
     }
   }
 
-  /** Mueve el clon visual y resalta la celda que está debajo */
   function onPointerMove(e) {
     const isTouch = e.type === "touchmove";
     if (isTouch) e.preventDefault();
     const point = isTouch ? e.touches[0] : e;
 
     if (dragClone && playAreaRect) {
-      const cloneWidth = dragClone.offsetWidth;
-      const cloneHeight = dragClone.offsetHeight;
-
-      let x = point.clientX - pointerOffsetX;
-      let y = point.clientY - pointerOffsetY;
-
-      // Clampea para que el clon no se salga del área de juego
-      x = Math.max(
+      const w = dragClone.offsetWidth;
+      const h = dragClone.offsetHeight;
+      const x = Math.max(
         playAreaRect.left,
-        Math.min(x, playAreaRect.right - cloneWidth),
+        Math.min(point.clientX - pointerOffsetX, playAreaRect.right - w),
       );
-      y = Math.max(
+      const y = Math.max(
         playAreaRect.top,
-        Math.min(y, playAreaRect.bottom - cloneHeight),
+        Math.min(point.clientY - pointerOffsetY, playAreaRect.bottom - h),
       );
-
       dragClone.style.left = `${x}px`;
       dragClone.style.top = `${y}px`;
     }
 
-    // Detecta la celda debajo del puntero/dedo para resaltarla (cell--hover)
+    // Resalta la celda que está bajo el puntero
     const target = document.elementFromPoint(point.clientX, point.clientY);
-    const cellUnderPointer = target
-      ? target.closest(".grid--empty .grid__cell")
-      : null;
-
+    const cellUnderPointer =
+      target?.closest(".grid--empty .grid__cell") || null;
     if (cellUnderPointer !== hoveredCell) {
-      if (hoveredCell) hoveredCell.classList.remove("cell--hover");
-      if (cellUnderPointer) cellUnderPointer.classList.add("cell--hover");
+      hoveredCell?.classList.remove("cell--hover");
+      cellUnderPointer?.classList.add("cell--hover");
       hoveredCell = cellUnderPointer;
     }
   }
 
-  /** Finaliza el arrastre: limpia visuales y resuelve el drop */
   function onPointerEnd(e) {
     const isTouch = e.type === "touchend";
     document.removeEventListener(
       isTouch ? "touchmove" : "mousemove",
       onPointerMove,
     );
-
     cleanupDragVisuals();
 
     const point = isTouch ? e.changedTouches[0] : e;
     const target = document.elementFromPoint(point.clientX, point.clientY);
-    const targetCell = target
-      ? target.closest(".grid--empty .grid__cell")
-      : null;
-
+    const targetCell = target?.closest(".grid--empty .grid__cell") || null;
     resolveDrop(targetCell);
   }
 
-  /** Cancela el arrastre (ej. interrupción del sistema en touch) */
   function onPointerCancel() {
     document.removeEventListener("touchmove", onPointerMove);
     cleanupDragVisuals();
     dragSrc = dragFromCell = null;
   }
 
-  /** Quita el clon visual, la clase de arrastre y el resaltado de celda */
   function cleanupDragVisuals() {
     document.body.classList.remove("is-dragging");
-
-    if (dragClone) {
-      dragClone.remove();
-      dragClone = null;
-    }
-
-    if (dragSrc) dragSrc.classList.remove("bug--dragging");
-
-    if (hoveredCell) {
-      hoveredCell.classList.remove("cell--hover");
-      hoveredCell = null;
-    }
+    dragClone?.remove();
+    dragClone = null;
+    dragSrc?.classList.remove("bug--dragging");
+    hoveredCell?.classList.remove("cell--hover");
+    hoveredCell = null;
   }
 
-  /** Aplica el resultado del drop: correcto, incorrecto, bloqueado o fuera de celda */
+  /* ==========================================
+     LÓGICA DE DROP
+  ========================================== */
   function resolveDrop(targetCell) {
     if (!dragSrc) return;
 
-    // Soltó fuera de una celda válida → rebote
-    if (!targetCell) {
+    // Soltó fuera de celda o en celda bloqueada → rebote
+    if (!targetCell || targetCell.dataset.locked === "true") {
       playAudio(AUDIO.wrong);
       returnToOrigin(dragSrc);
       bounce(dragSrc);
@@ -327,18 +250,7 @@
       return;
     }
 
-    const idx = cellIndex(targetCell);
-
-    // Celda ya bloqueada (acierto previo) → rebote
-    if (targetCell.dataset.locked === "true") {
-      playAudio(AUDIO.wrong);
-      returnToOrigin(dragSrc);
-      bounce(dragSrc);
-      dragSrc = dragFromCell = null;
-      return;
-    }
-
-    // Si la celda tenía un bicho sin bloquear, lo devolvemos al banco
+    // Si la celda tenía un bicho libre, lo devuelve al banco
     const existing = targetCell.querySelector("img");
     if (existing && existing !== dragSrc) {
       existing.classList.remove("bug--placed");
@@ -346,6 +258,7 @@
       makeDraggable(existing);
     }
 
+    const idx = cellIndex(targetCell);
     const expectedSrc = solution[idx];
     const droppedSrc = dragSrc.getAttribute("src");
 
@@ -360,16 +273,10 @@
     dragSrc = dragFromCell = null;
   }
 
-  /** Regresa la imagen a su celda de origen, o al banco si venía de ahí */
   function returnToOrigin(img) {
-    if (dragFromCell) {
-      dragFromCell.appendChild(img);
-    } else {
-      document.querySelector(".bug-bank").appendChild(img);
-    }
+    (dragFromCell ?? document.querySelector(".bug-bank")).appendChild(img);
   }
 
-  /** Aplica la animación de rebote (colocación incorrecta) */
   function bounce(img) {
     img.classList.add("bug--bounce");
     img.addEventListener(
@@ -379,7 +286,6 @@
     );
   }
 
-  /** Coloca el bicho correctamente, lo bloquea y verifica si hay victoria */
   function placeCorrectly(img, cell) {
     img.classList.add("bug--placed");
     cell.appendChild(img);
@@ -399,7 +305,6 @@
         stopAllAudio();
         playAudio(AUDIO.win);
       }, 600);
-
       showWinFeedback();
     }
   }
@@ -407,8 +312,6 @@
   /* ==========================================
      PANTALLA DE VICTORIA
   ========================================== */
-
-  /** Crea y muestra el overlay de victoria con el botón de continuar */
   function showWinFeedback() {
     document.body.classList.add("game--win");
 
@@ -437,29 +340,26 @@
   }
 
   /* ==========================================
-     AUDIO DE INSTRUCCIÓN
-     El botón de bocina siempre lo puede reiniciar manualmente.
+     INICIALIZACIÓN
   ========================================== */
+  bankBugs.forEach((bug) => makeDraggable(bug));
+
   document.querySelectorAll(".controls__btn--audio").forEach((btn) => {
     btn.addEventListener("click", () => playIntroAudio());
   });
 
-  /* ==========================================
-     INICIALIZACIÓN
-  ========================================== */
-
-  bankBugs.forEach((bug) => makeDraggable(bug));
-
-  // Intenta reproducir el intro al cargar.
-  // En iPad/Safari el autoplay falla sin un gesto previo del usuario;
-  // en ese caso se reintenta en el primer touchend, que ocurre al
-  // levantar el dedo — después de que el drag terminó, nunca durante.
-  window.addEventListener("load", () => {
-    setTimeout(playIntroAudio, 500);
-  });
-
+  // Intenta el autoplay al cargar; en Safari/iPad puede fallar sin gesto previo,
+  // por eso se reintenta en el primer touchend.
+  window.addEventListener("load", () => setTimeout(playIntroAudio, 500));
   document.addEventListener(
     "touchend",
+    () => {
+      if (!introPlayed) playIntroAudio();
+    },
+    { once: true },
+  );
+  document.addEventListener(
+    "click",
     () => {
       if (!introPlayed) playIntroAudio();
     },
