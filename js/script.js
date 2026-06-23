@@ -23,81 +23,101 @@
     win: "audio/C26_AS_AU_RE_68_PRIN.mp3",
   };
 
-  // Cachea instancias de Audio ya creadas, para no recrearlas cada vez
   const audioCache = new Map();
 
-  // Indica si el audio de victoria ya quedó "desbloqueado" para iOS/iPadOS
-  let winAudioUnlocked = false;
+  // El audio que se está reproduciendo actualmente
+  let currentAudio = null;
+
+  // true mientras el intro esté sonando — ningún otro audio lo interrumpe
+  let introPlaying = false;
+
+  // true una vez que el intro ya sonó al menos una vez
+  let introPlayed = false;
+
+  function getAudio(src) {
+    if (!audioCache.has(src)) {
+      const a = new Audio(src);
+      a.preload = "auto";
+      audioCache.set(src, a);
+    }
+    return audioCache.get(src);
+  }
 
   /**
-   * Reproduce un efecto de sonido.
-   *
-   * En iOS/iPadOS, reutilizar el mismo elemento <audio> con
-   * pause() + currentTime = 0 + play() en sucesión rápida puede
-   * dejarlo "atascado" y sin sonido (por ejemplo, cuando el niño
-   * coloca varios bichos muy rápido). Si el audio cacheado sigue
-   * sonando, se usa un clon en vez de interrumpirlo.
+   * Reproduce un audio de feedback (acierto / error / victoria).
+   * Si el intro está sonando, NO lo interrumpe.
+   * Si hay otro feedback sonando, lo cancela y arranca el nuevo.
    */
   function playAudio(src) {
-    const cached = audioCache.get(src);
-    let audio;
+    if (introPlaying) return; // el intro es intocable mientras suena
 
-    if (!cached) {
-      // Primera vez que se usa este sonido
-      audio = new Audio(src);
-      audio.preload = "auto";
-      audioCache.set(src, audio);
-    } else if (cached.paused) {
-      // El audio cacheado no está sonando — se reutiliza
-      audio = cached;
-      audio.currentTime = 0;
-    } else {
-      // El audio cacheado sigue sonando — se usa un clon
-      // independiente para no interrumpir la reproducción en curso
-      audio = cached.cloneNode(true);
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
     }
 
+    const audio = getAudio(src);
+    currentAudio = audio;
+    audio.currentTime = 0;
+
     audio.play().catch((err) => {
-      console.warn("No se pudo reproducir audio:", src, err);
+      if (err.name !== "AbortError") {
+        console.warn("Audio bloqueado:", src, err.name);
+      }
     });
   }
 
-  // Precarga los efectos para que estén listos desde el primer uso
-  [AUDIO.wrong, AUDIO.correct, AUDIO.win].forEach((src) => {
-    const audio = new Audio(src);
-    audio.preload = "auto";
-    audioCache.set(src, audio);
-  });
-
   /**
-   * Desbloquea el audio de victoria en iOS/iPadOS.
-   *
-   * Safari solo permite reproducir audio si el .play() ocurre de
-   * forma síncrona dentro de un gesto del usuario. El audio de
-   * victoria se dispara con un delay (setTimeout en placeCorrectly),
-   * así que aquí lo "desbloqueamos" en el primer toque/clic de toda
-   * la página, reproduciéndolo y pausándolo de inmediato.
+   * Reproduce el audio de instrucción.
+   * Marca introPlaying = true mientras dura y lo limpia al terminar.
    */
-  function unlockWinAudio() {
-    if (winAudioUnlocked) return;
+  function playIntroAudio() {
+    const audio = getAudio(AUDIO.intro);
 
-    const winAudio = audioCache.get(AUDIO.win);
-    if (!winAudio) return;
+    // Detiene cualquier feedback previo antes de arrancar el intro
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
 
-    winAudio
+    currentAudio = audio;
+    audio.currentTime = 0;
+    introPlaying = true;
+
+    audio
       .play()
       .then(() => {
-        winAudio.pause();
-        winAudio.currentTime = 0;
-        winAudioUnlocked = true;
+        introPlayed = true;
       })
-      .catch(() => {
-        // Si falla, se reintentará en el siguiente gesto del usuario
+      .catch((err) => {
+        introPlaying = false; // falló el autoplay, quedará pendiente
+        currentAudio = null;
+        if (err.name !== "AbortError") {
+          console.warn("Intro bloqueado:", err.name);
+        }
       });
+
+    // Al terminar de reproducirse, libera el bloqueo
+    audio.addEventListener(
+      "ended",
+      () => {
+        introPlaying = false;
+      },
+      { once: true },
+    );
   }
 
-  document.addEventListener("pointerdown", unlockWinAudio, { once: true });
-  document.addEventListener("touchstart", unlockWinAudio, { once: true });
+  function stopAllAudio() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+    introPlaying = false;
+  }
+
+  // Precarga todos los audios
+  Object.values(AUDIO).forEach((src) => getAudio(src));
 
   /* ==========================================
      SOLUCIÓN DEL JUEGO
@@ -375,7 +395,11 @@
 
     correctCount++;
     if (correctCount === totalBugs) {
-      setTimeout(() => playAudio(AUDIO.win), 600);
+      setTimeout(() => {
+        stopAllAudio();
+        playAudio(AUDIO.win);
+      }, 600);
+
       showWinFeedback();
     }
   }
@@ -414,21 +438,10 @@
 
   /* ==========================================
      AUDIO DE INSTRUCCIÓN
-     Se intenta reproducir al cargar la pantalla;
-     el botón de la bocina lo reinicia manualmente.
+     El botón de bocina siempre lo puede reiniciar manualmente.
   ========================================== */
-
-  const introAudio = new Audio(AUDIO.intro);
-
-  /** Reinicia y reproduce el audio de instrucción desde el inicio */
-  function playIntro() {
-    introAudio.pause();
-    introAudio.currentTime = 0;
-    introAudio.play().catch(() => {});
-  }
-
   document.querySelectorAll(".controls__btn--audio").forEach((btn) => {
-    btn.addEventListener("click", playIntro);
+    btn.addEventListener("click", () => playIntroAudio());
   });
 
   /* ==========================================
@@ -437,19 +450,19 @@
 
   bankBugs.forEach((bug) => makeDraggable(bug));
 
-  // Reproduce la instrucción al cargar la pantalla.
-  // Si el navegador bloquea el autoplay, espera la primera
-  // interacción del usuario en cualquier parte de la página
-  // para reproducirla en ese momento.
+  // Intenta reproducir el intro al cargar.
+  // En iPad/Safari el autoplay falla sin un gesto previo del usuario;
+  // en ese caso se reintenta en el primer touchend, que ocurre al
+  // levantar el dedo — después de que el drag terminó, nunca durante.
   window.addEventListener("load", () => {
-    setTimeout(() => {
-      introAudio.play().catch(() => {
-        const unlockIntro = () => {
-          playIntro();
-          document.removeEventListener("pointerdown", unlockIntro);
-        };
-        document.addEventListener("pointerdown", unlockIntro, { once: true });
-      });
-    }, 500);
+    setTimeout(playIntroAudio, 500);
   });
+
+  document.addEventListener(
+    "touchend",
+    () => {
+      if (!introPlayed) playIntroAudio();
+    },
+    { once: true },
+  );
 })();

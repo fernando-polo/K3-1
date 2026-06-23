@@ -161,7 +161,10 @@
         </figure>
       </aside>
 
-      <!-- Botones de control — solo visibles en desktop -->
+      <!-- Botones de control: ahora un único set, siempre visible.
+           Antes había uno duplicado en el footer para mobile/tablet;
+           como el juego solo corre en horizontal (igual que el
+           proyecto de referencia), ya no hace falta esa duplicación. -->
       <div class="game__controls">
         <a
           href="../../k3_menu.html"
@@ -200,47 +203,6 @@
         </button>
       </div>
     </main>
-
-    <!-- FOOTER — botones de control solo en mobile/tablet -->
-    <footer class="footer">
-      <div class="footer__controls">
-        <a
-          href="../../k3_menu.html"
-          class="controls__btn controls__btn--home"
-          aria-label="Ir al inicio"
-        >
-          <img
-            class="controls__icon"
-            src="img/home.png"
-            alt="Inicio"
-            aria-hidden="true"
-          />
-        </a>
-        <a
-          href="index.html"
-          class="controls__btn controls__btn--back"
-          aria-label="Regresar"
-        >
-          <img
-            class="controls__icon"
-            src="img/back.png"
-            alt="Regreso"
-            aria-hidden="true"
-          />
-        </a>
-        <button
-          class="controls__btn controls__btn--audio"
-          aria-label="Reproducir audio"
-        >
-          <img
-            class="controls__icon"
-            src="img/audio.png"
-            alt=""
-            aria-hidden="true"
-          />
-        </button>
-      </div>
-    </footer>
 
     <script src="js/script.js"></script>
   </body>
