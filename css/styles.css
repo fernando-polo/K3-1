@@ -120,7 +120,7 @@ body {
   gap: clamp(1rem, 3vw, 2.5rem);
   min-width: 0;
   overflow: hidden;
-  padding: 5rem 0 0 0;
+  padding: 3rem 0 0 0;
 }
 
 .grid {
@@ -157,25 +157,26 @@ body {
 /* ==========================================
    BANCO DE BICHOS
 ========================================== */
-
 .bug-bank {
   grid-area: bug-bank;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  align-self: start;
   gap: 1vw;
-  height: clamp(4rem, 9vmin, 7rem);
-  padding: 0 1vw;
+  height: calc(
+    min(26vw, 30vh) / 3 + 2.4dvh
+  ); /* lado de la celda + padding, fijo */
+  padding: 1.2dvh 1vw;
   background-color: #fff;
   border: 1px solid #9568a5;
 }
 
 .bug-bank__bug {
-  width: clamp(2.5rem, 6vmin, 5rem);
+  width: calc(min(26vw, 44vh) * 0.2);
   height: auto;
   cursor: grab;
 }
-
 /* Cursor "grabbing" forzado en TODA la página mientras se arrastra,
    sin importar sobre qué elemento pase el mouse, hasta soltar. */
 body.is-dragging,

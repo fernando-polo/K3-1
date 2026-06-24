@@ -251,9 +251,15 @@
 
     // Detecta la celda debajo del puntero/dedo para resaltarla (cell--hover)
     const target = document.elementFromPoint(point.clientX, point.clientY);
-    const cellUnderPointer = target
+    let cellUnderPointer = target
       ? target.closest(".grid--empty .grid__cell")
       : null;
+
+    // Si la celda ya está bloqueada (acierto previo), no se trata
+    // como zona activa: no se resalta como si se pudiera soltar ahí.
+    if (cellUnderPointer && cellUnderPointer.dataset.locked === "true") {
+      cellUnderPointer = null;
+    }
 
     if (cellUnderPointer !== hoveredCell) {
       if (hoveredCell) hoveredCell.classList.remove("cell--hover");
@@ -311,7 +317,6 @@
 
     // Soltó fuera de una celda válida → rebote
     if (!targetCell) {
-      playAudio(AUDIO.wrong);
       returnToOrigin(dragSrc);
       bounce(dragSrc);
       dragSrc = dragFromCell = null;
