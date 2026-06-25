@@ -457,9 +457,7 @@
     playAudio(AUDIO.intro);
   }
 
-  document.querySelectorAll(".controls__btn--audio").forEach((btn) => {
-    btn.addEventListener("click", playIntro);
-  });
+  window.playIntro = playIntro;
 
   /* ==========================================
    INICIALIZACIÓN

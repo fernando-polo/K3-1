@@ -14,10 +14,12 @@
 
   <body>
     <!-- ENCABEZADO -->
-    <header class="header">
-      <div class="header__logo">
-        <img src="img/logo_compartir.png" alt="Logo Compartir" />
-      </div>
+    <header class="top-bar">
+      <img
+        src="img/logo_compartir.png"
+        alt="Compartir"
+        class="logo-compartir"
+      />
     </header>
 
     <!-- JUEGO -->
@@ -161,47 +163,18 @@
         </figure>
       </aside>
 
-      <!-- Botones de control: ahora un único set, siempre visible.
-           Antes había uno duplicado en el footer para mobile/tablet;
-           como el juego solo corre en horizontal (igual que el
-           proyecto de referencia), ya no hace falta esa duplicación. -->
-      <div class="game__controls">
-        <a
-          href="../../k3_menu.html"
-          class="controls__btn controls__btn--home"
-          aria-label="Ir al inicio"
-        >
-          <img
-            class="controls__icon"
-            src="img/home.png"
-            alt=""
-            aria-hidden="true"
-          />
+      <!-- NUEVOS CONTROLES -->
+      <nav class="bottom-nav" aria-label="Navegación">
+        <a href="../../k3_menu.html" class="nav-circle">
+          <img src="img/home.png" alt="Inicio" />
         </a>
-        <a
-          href="index.html"
-          class="controls__btn controls__btn--back"
-          aria-label="Regresar"
-        >
-          <img
-            class="controls__icon"
-            src="img/back.png"
-            alt=""
-            aria-hidden="true"
-          />
+        <a href="index.html" class="nav-circle">
+          <img src="img/back.png" alt="Regreso" />
         </a>
-        <button
-          class="controls__btn controls__btn--audio"
-          aria-label="Reproducir audio"
-        >
-          <img
-            class="controls__icon"
-            src="img/audio.png"
-            alt=""
-            aria-hidden="true"
-          />
-        </button>
-      </div>
+        <div class="nav-circle">
+          <img src="img/audio.png" alt="Audio" onclick="playIntro()" />
+        </div>
+      </nav>
     </main>
 
     <script src="js/script.js"></script>

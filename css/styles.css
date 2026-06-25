@@ -68,19 +68,27 @@ body {
    HEADER
 ========================================== */
 
-.header {
+.top-bar {
   grid-area: header;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 2dvh 2vw;
+  position: fixed;
+  top: clamp(10px, 2.5vw, 22px);
+  right: clamp(10px, 3vw, 26px);
+  z-index: 50;
+  pointer-events: none;
 }
 
-.header__logo img {
+.top-bar .logo-compartir {
+  pointer-events: auto;
+}
+
+.logo-compartir {
+  height: auto;
+  width: auto;
+  max-height: clamp(40px, 7vw, 52px);
+  max-width: min(200px, 42vw);
+  object-fit: contain;
   display: block;
-  width: clamp(140px, 15vh, 240px);
 }
-
 /* ==========================================
    MAIN (.game)
    2 columnas: contenido del juego | guía.
@@ -120,7 +128,7 @@ body {
   gap: clamp(1rem, 3vw, 2.5rem);
   min-width: 0;
   overflow: hidden;
-  padding: 3rem 0 0 0;
+  padding: 6rem 0 0 0;
 }
 
 .grid {
@@ -188,41 +196,43 @@ body.is-dragging * {
    BOTONES DE CONTROL
 ========================================== */
 
-.game__controls {
+/* ── Bottom nav ── */
+.bottom-nav {
   grid-area: controls;
+  position: fixed;
+  left: clamp(12px, 4vw, 28px);
+  bottom: clamp(14px, 3.5vh, 28px);
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  gap: 1vw;
-  /* padding: 0.5dvh 1dvh; */
-  padding: 0 0 1dvh;
+  gap: clamp(10px, 2.5vw, 16px);
+  z-index: 40;
 }
 
-.controls__btn {
+.nav-circle {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   padding: 0;
-  margin: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
 }
 
-.controls__btn:focus,
-.controls__btn:focus-visible {
-  outline: none;
+.nav-circle:hover {
+  transform: scale(1.06);
 }
 
-.controls__icon {
-  display: block;
-  width: clamp(2vw, 3.5vw, 5vw);
+.nav-circle img {
+  width: clamp(44px, 11vw, 58px);
   height: auto;
-  user-select: none;
-  pointer-events: none;
+  display: block;
+}
+
+.nav-circle:focus-visible {
+  outline: 3px solid #1565c0;
+  outline-offset: 4px;
 }
 
 /* ==========================================
